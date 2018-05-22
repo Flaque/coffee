@@ -1,9 +1,21 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from "react";
+import styled from "styled-components";
+import { connect } from "react-redux";
+import { currencies } from "../merchant";
+import { serialize, deserialize } from "json-immutable";
 
-const Title = styled.h1`
-  color: red;
-  font-size: 50px;
-`
+const Coffee = ({ count }) => <p>{count} Coffees</p>;
 
-export default () => <Title>My page</Title>
+const Main = ({ coffee }) => (
+  <main>
+    <Coffee count={coffee} />
+  </main>
+);
+
+const mapStateToProps = state => {
+  return {
+    coffee: state.get(currencies.COFFEE)
+  };
+};
+
+export default connect(mapStateToProps)(Main);
