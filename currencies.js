@@ -1,4 +1,4 @@
-export const currencies = {
+export default {
   COFFEE: "COFFEE",
   MONEY: "MONEY"
 };
