@@ -5,15 +5,21 @@ import currencies from "../currencies";
 import { serialize, deserialize } from "json-immutable";
 import { makeCoffee } from "../store";
 import { start } from "../game";
+import Head from "../lib/head.js";
 
 const createCurrency = label => ({ count }) => (
   <p>
-    {count} {label}
+    <span>{label} </span> {"~"} {count.toFixed(1)}
+    <style jsx>{`
+      span {
+        color: #0097e6;
+      }
+    `}</style>
   </p>
 );
 
-const Coffee = createCurrency("Coffee");
-const Money = createCurrency("Money");
+const Coffee = createCurrency("☕️ Coffee");
+const Money = createCurrency("💵 Money");
 
 class Main extends React.Component {
   componentDidMount() {
@@ -25,8 +31,11 @@ class Main extends React.Component {
 
     return (
       <main>
+        <Head />
         <p>
-          <button onClick={handleMakeCoffee}> Make Coffee</button>
+          <button onClick={handleMakeCoffee}>
+            {"☕️"} Make Coffee {"☕️"}
+          </button>
         </p>
         <Coffee count={coffee} />
         <Money count={money} />

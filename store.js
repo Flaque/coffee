@@ -17,7 +17,10 @@ export const makeCoffee = createAction(types.MAKE_COFFEE);
 export const buyCoffee = createAction(types.BUY_COFFEE);
 
 // Reducer
-const defaultState = new Map({ [currencies.COFFEE]: 0, [currencies.MONEY]: 0 });
+const defaultState = new Map({
+  [currencies.COFFEE]: 0,
+  [currencies.MONEY]: 0
+});
 
 export const reducer = (wallet = defaultState, action) => {
   switch (action.type) {
