@@ -3,9 +3,10 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import currencies from "../currencies";
 import { serialize, deserialize } from "json-immutable";
-import { makeCoffee } from "../store";
+import { brewCoffee, startBrew } from "../store";
 import { start } from "../game";
 import Head from "../lib/head.js";
+import BrewBar from "../lib/BrewBar";
 
 const createCurrency = label => ({ count }) => (
   <p>
@@ -27,13 +28,14 @@ class Main extends React.Component {
   }
 
   render() {
-    const { coffee, money, handleMakeCoffee } = this.props;
+    const { coffee, money, progress, handleMakeCoffee } = this.props;
 
     return (
       <main>
         <Head />
+        <BrewBar progress={progress} />
         <p>
-          <button onClick={handleMakeCoffee}>
+          <button onClick={handleMakeCoffee} disabled={progress !== 0}>
             {"☕️"} Make Coffee {"☕️"}
           </button>
         </p>
@@ -47,14 +49,15 @@ class Main extends React.Component {
 const mapStateToProps = state => {
   return {
     coffee: state.get(currencies.COFFEE),
-    money: state.get(currencies.MONEY)
+    money: state.get(currencies.MONEY),
+    progress: state.get(currencies.BREW_PROGRESS)
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     handleMakeCoffee: () => {
-      dispatch(makeCoffee());
+      dispatch(startBrew());
     },
     dispatch: dispatch
   };

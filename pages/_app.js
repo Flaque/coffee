@@ -8,7 +8,7 @@ import { fromJS } from "immutable";
 export default withRedux(initStore, {
   serializeState: state => {
     // state here is always an immutable Map
-    return state.toJS();
+    return state;
   },
   deserializeState: state => {
     return state ? fromJS(state) : state;

@@ -1,4 +1,5 @@
 export default {
   COFFEE: "COFFEE",
-  MONEY: "MONEY"
+  MONEY: "MONEY",
+  BREW_PROGRESS: "BREW_PROGRESS"
 };

@@ -6,20 +6,40 @@ import currencies from "./currencies";
 import { createAction } from "redux-actions";
 import { Coffee } from "./pouch";
 import { buy } from "merchant.js";
+import config from "./config";
+
+const { BREW_SPEED } = config;
 
 // Actions
 export const types = {
   MAKE_COFFEE: "MAKE_COFFEE",
-  BUY_COFFEE: "BUY_COFFEE"
+  BUY_COFFEE: "BUY_COFFEE",
+  BREW_COFFEE: "BREW_COFFEE",
+  START_BREW: "START_BREW",
+  EMPTY_POT: "EMPTY_POT"
 };
 
-export const makeCoffee = createAction(types.MAKE_COFFEE);
 export const buyCoffee = createAction(types.BUY_COFFEE);
+export const startBrew = createAction(types.START_BREW);
+
+const pourCup = createAction(types.MAKE_COFFEE);
+const emptyPot = createAction(types.EMPTY_POT);
+const brewCoffeeTick = createAction(types.BREW_COFFEE);
+
+export const brewCoffee = () => (dispatch, getState) => {
+  if (getState().get(currencies.BREW_PROGRESS) >= 1.0) {
+    dispatch(pourCup());
+    dispatch(emptyPot());
+  }
+
+  dispatch(brewCoffeeTick());
+};
 
 // Reducer
 const defaultState = new Map({
   [currencies.COFFEE]: 0,
-  [currencies.MONEY]: 0
+  [currencies.MONEY]: 0,
+  [currencies.BREW_PROGRESS]: 0
 });
 
 export const reducer = (wallet = defaultState, action) => {
@@ -31,6 +51,16 @@ export const reducer = (wallet = defaultState, action) => {
         return wallet;
       }
       return buy(Coffee, wallet);
+    case types.START_BREW:
+      return wallet.update(currencies.BREW_PROGRESS, c => c + BREW_SPEED);
+    case types.EMPTY_POT:
+      return wallet.set(currencies.BREW_PROGRESS, 0);
+    case types.BREW_COFFEE:
+      if (wallet.get(currencies.BREW_PROGRESS) <= 0.0) {
+        return wallet;
+      }
+      return wallet.update(currencies.BREW_PROGRESS, c => c + BREW_SPEED);
+
     default:
       return wallet;
   }
