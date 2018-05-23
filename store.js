@@ -9,18 +9,35 @@ import { buy } from "merchant.js";
 import config from "./config";
 
 const { BREW_SPEED } = config;
+const INITIAL_CUPS_PER_BReW = 1;
+
+// Utils
+const buyIfEnoughMoney = (item, wallet) => {
+  const newWallet = buy(item, wallet);
+  if (newWallet.get(currencies.MONEY) >= 0.0) {
+    return newWallet;
+  }
+  return wallet;
+};
+
+const updateCupsPerBrew = state => {
+  return state.update(
+    currencies.CUPS_PER_BREW,
+    c => state.get(currencies.POTS) + INITIAL_CUPS_PER_BReW
+  );
+};
 
 // Actions
 export const types = {
   MAKE_COFFEE: "MAKE_COFFEE",
-  BUY_COFFEE: "BUY_COFFEE",
+  SELL_COFFEE: "SELL_COFFEE",
   BREW_COFFEE: "BREW_COFFEE",
   START_BREW: "START_BREW",
   EMPTY_POT: "EMPTY_POT",
   BUY_POT: "BUY_POT"
 };
 
-export const buyCoffee = createAction(types.BUY_COFFEE);
+export const sellCoffee = createAction(types.SELL_COFFEE);
 export const startBrew = createAction(types.START_BREW);
 export const buyPot = createAction(types.BUY_POT);
 
@@ -42,22 +59,29 @@ const defaultState = new Map({
   [currencies.COFFEE]: 0,
   [currencies.MONEY]: 0,
   [currencies.BREW_PROGRESS]: 0,
-  [currencies.POTS]: 1
+  [currencies.POTS]: 0,
+  [currencies.CUPS_PER_BREW]: INITIAL_CUPS_PER_BReW
 });
 
 export const reducer = (wallet = defaultState, action) => {
   switch (action.type) {
     case types.MAKE_COFFEE:
-      return wallet.update(currencies.COFFEE, c => c + 1);
-    case types.BUY_COFFEE:
+      return updateCupsPerBrew(wallet).update(
+        currencies.COFFEE,
+        c => c + wallet.get(currencies.CUPS_PER_BREW)
+      );
+    case types.SELL_COFFEE:
       if (wallet.get(currencies.COFFEE) <= 0) {
         return wallet;
       }
       return buy(Coffee, wallet);
     case types.BUY_POT:
-      return buy(Pot, wallet);
+      return updateCupsPerBrew(buyIfEnoughMoney(Pot, wallet));
     case types.START_BREW:
-      return wallet.update(currencies.BREW_PROGRESS, c => c + BREW_SPEED);
+      return updateCupsPerBrew(wallet).update(
+        currencies.BREW_PROGRESS,
+        c => c + BREW_SPEED
+      );
     case types.EMPTY_POT:
       return wallet.set(currencies.BREW_PROGRESS, 0);
     case types.BREW_COFFEE:

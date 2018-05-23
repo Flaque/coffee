@@ -1,8 +1,8 @@
-import { buyCoffee, brewCoffee } from "./store";
+import { sellCoffee, brewCoffee } from "./store";
 import config from "./config";
 
 const tick = dispatch => {
-  dispatch(buyCoffee());
+  dispatch(sellCoffee());
   dispatch(brewCoffee());
 };
 
