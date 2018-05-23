@@ -1,13 +1,21 @@
 import { Map } from "immutable";
 import currencies from "./currencies";
+import config from "./config";
 
 const costOfCoffee = 3;
 
+const inflatePrice = x => {
+  if (x === 0) {
+    return 0;
+  }
+  return Math.ceil((3 * Math.log(x)) ^ 2.5);
+};
+
 export const Coffee = {
   type: currencies.COFFEE,
-  cost: () => {
+  cost: state => {
     return Map({
-      [currencies.MONEY]: costOfCoffee,
+      [currencies.MONEY]: state.get(currencies.COST_OF_COFFEE),
       [currencies.COFFEE]: -1
     });
   }
@@ -15,10 +23,12 @@ export const Coffee = {
 
 export const Pot = {
   type: currencies.COFFEE,
-  cost: () => {
+  cost: state => {
     return Map({
       [currencies.POTS]: 1,
-      [currencies.MONEY]: -2
+      [currencies.MONEY]: -(
+        config.START_POT_PRICE + inflatePrice(state.get(currencies.POTS))
+      )
     });
   }
 };

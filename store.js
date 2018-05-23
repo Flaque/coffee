@@ -9,11 +9,11 @@ import { buy } from "merchant.js";
 import config from "./config";
 
 const { BREW_SPEED } = config;
-const INITIAL_CUPS_PER_BReW = 1;
+const INITIAL_CUPS_PER_BREW = 1;
 
 // Utils
 const buyIfEnoughMoney = (item, wallet) => {
-  const newWallet = buy(item, wallet);
+  const newWallet = buy(item, wallet, wallet);
   if (newWallet.get(currencies.MONEY) >= 0.0) {
     return newWallet;
   }
@@ -23,7 +23,7 @@ const buyIfEnoughMoney = (item, wallet) => {
 const updateCupsPerBrew = state => {
   return state.update(
     currencies.CUPS_PER_BREW,
-    c => state.get(currencies.POTS) + INITIAL_CUPS_PER_BReW
+    c => state.get(currencies.POTS) + INITIAL_CUPS_PER_BREW
   );
 };
 
@@ -60,7 +60,8 @@ const defaultState = new Map({
   [currencies.MONEY]: 0,
   [currencies.BREW_PROGRESS]: 0,
   [currencies.POTS]: 0,
-  [currencies.CUPS_PER_BREW]: INITIAL_CUPS_PER_BReW
+  [currencies.CUPS_PER_BREW]: INITIAL_CUPS_PER_BREW,
+  [currencies.COST_OF_COFFEE]: 3
 });
 
 export const reducer = (wallet = defaultState, action) => {
@@ -74,7 +75,7 @@ export const reducer = (wallet = defaultState, action) => {
       if (wallet.get(currencies.COFFEE) <= 0) {
         return wallet;
       }
-      return buy(Coffee, wallet);
+      return buy(Coffee, wallet, wallet);
     case types.BUY_POT:
       return updateCupsPerBrew(buyIfEnoughMoney(Pot, wallet));
     case types.START_BREW:
