@@ -8,16 +8,22 @@ import { start } from "../game";
 import Head from "../lib/head.js";
 import BrewBar from "../lib/BrewBar";
 
-const createCurrency = label => ({ count }) => (
-  <p>
-    <span>{label} </span> {"~"} {count.toFixed(1)}
-    <style jsx>{`
-      span {
-        color: #0097e6;
-      }
-    `}</style>
-  </p>
-);
+const createCurrency = label => ({ count }) => {
+  if (count <= 0) {
+    return null;
+  }
+
+  return (
+    <p>
+      <span>{label} </span> {"~"} {count.toFixed(1)}
+      <style jsx>{`
+        span {
+          color: #0097e6;
+        }
+      `}</style>
+    </p>
+  );
+};
 
 const Coffee = createCurrency("☕️ Coffee");
 const Money = createCurrency("💵 Money");
