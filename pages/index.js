@@ -3,30 +3,37 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import currencies from "../currencies";
 import { serialize, deserialize } from "json-immutable";
-import { brewCoffee, startBrew } from "../store";
+import { brewCoffee, startBrew, buyCoffee } from "../store";
 import { start } from "../game";
 import Head from "../lib/head.js";
 import BrewBar from "../lib/BrewBar";
+import { create } from "domain";
 
-const createCurrency = label => ({ count }) => {
+const createCurrency = (label, subtitle) => ({ count }) => {
   if (count <= 0) {
     return null;
   }
 
+  const sub = subtitle ? <p>{subtitle}</p> : null;
+
   return (
-    <p>
-      <span>{label} </span> {"~"} {count.toFixed(1)}
-      <style jsx>{`
-        span {
-          color: #0097e6;
-        }
-      `}</style>
-    </p>
+    <div>
+      <p>
+        <span>{label} </span> {"~"} {count.toFixed(1)}
+        <style jsx>{`
+          span {
+            color: #0097e6;
+          }
+        `}</style>
+      </p>
+      {sub}
+    </div>
   );
 };
 
 const Coffee = createCurrency("☕️ Coffee");
 const Money = createCurrency("💵 Money");
+const Pots = createCurrency("🏺 Pot", "Make more coffee per brew");
 
 class Main extends React.Component {
   componentDidMount() {
@@ -34,7 +41,7 @@ class Main extends React.Component {
   }
 
   render() {
-    const { coffee, money, progress, handleMakeCoffee } = this.props;
+    const { coffee, money, pots, progress, handleMakeCoffee } = this.props;
 
     return (
       <main>
@@ -45,8 +52,12 @@ class Main extends React.Component {
             {"☕️"} Make Coffee {"☕️"}
           </button>
         </p>
+
+        <hr />
+
         <Coffee count={coffee} />
         <Money count={money} />
+        <Pots count={pots} />
       </main>
     );
   }
@@ -56,7 +67,8 @@ const mapStateToProps = state => {
   return {
     coffee: state.get(currencies.COFFEE),
     money: state.get(currencies.MONEY),
-    progress: state.get(currencies.BREW_PROGRESS)
+    progress: state.get(currencies.BREW_PROGRESS),
+    pots: state.get(currencies.POTS)
   };
 };
 
@@ -64,6 +76,9 @@ const mapDispatchToProps = dispatch => {
   return {
     handleMakeCoffee: () => {
       dispatch(startBrew());
+    },
+    handleBuyPot: () => {
+      dispatch(buyPot());
     },
     dispatch: dispatch
   };
