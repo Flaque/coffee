@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import currencies from "../currencies";
 import { serialize, deserialize } from "json-immutable";
-import { brewCoffee, startBrew, buyPot } from "../store";
+import { brewCoffee, startBrew, buyPot, sellCoffee } from "../store";
 import { start } from "../game";
 import Head from "../lib/head.js";
 import BrewBar from "../lib/BrewBar";
@@ -55,6 +55,7 @@ class Main extends React.Component {
       pots,
       progress,
       handleMakeCoffee,
+      handleSellCoffee,
       handleBuyPot,
       cupsPerBrew,
       costs
@@ -68,6 +69,11 @@ class Main extends React.Component {
           <LinkButton onClick={handleMakeCoffee} disabled={progress !== 0}>
             Make Coffee ({cupsPerBrew} cups)
           </LinkButton>
+
+          <LinkButton onClick={handleSellCoffee} disabled={coffee <= 0.0}>
+            Sell Coffee
+          </LinkButton>
+
           <LinkButton onClick={handleBuyPot} disabled={costs.pot > money}>
             Buy Pot (${costs.pot})
           </LinkButton>
@@ -105,6 +111,9 @@ const mapDispatchToProps = dispatch => {
     },
     handleBuyPot: () => {
       dispatch(buyPot());
+    },
+    handleSellCoffee: () => {
+      dispatch(sellCoffee());
     },
     dispatch: dispatch
   };

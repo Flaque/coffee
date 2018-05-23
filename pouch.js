@@ -7,8 +7,8 @@ export const Coffee = {
   type: currencies.COFFEE,
   cost: () => {
     return Map({
-      [currencies.MONEY]: costOfCoffee / 4,
-      [currencies.COFFEE]: -1 / 4
+      [currencies.MONEY]: costOfCoffee,
+      [currencies.COFFEE]: -1
     });
   }
 };
