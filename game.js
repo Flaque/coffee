@@ -2,7 +2,6 @@ import { sellCoffee, brewCoffee } from "./store";
 import config from "./config";
 
 const tick = dispatch => {
-  // dispatch(sellCoffee());
   dispatch(brewCoffee());
 };
 

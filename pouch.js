@@ -32,3 +32,13 @@ export const Pot = {
     });
   }
 };
+
+export const Brewer = {
+  type: currencies.BREWERS,
+  cost: state => {
+    return Map({
+      [currencies.MONEY]: -10,
+      [currencies.BREWERS]: 1
+    });
+  }
+};

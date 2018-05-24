@@ -4,7 +4,7 @@ import thunkMiddleware from "redux-thunk";
 import { Map } from "immutable";
 import currencies from "./currencies";
 import { createAction } from "redux-actions";
-import { Coffee, Pot } from "./pouch";
+import { Coffee, Pot, Brewer } from "./pouch";
 import { buy } from "merchant.js";
 import config from "./config";
 
@@ -34,12 +34,14 @@ export const types = {
   BREW_COFFEE: "BREW_COFFEE",
   START_BREW: "START_BREW",
   EMPTY_POT: "EMPTY_POT",
-  BUY_POT: "BUY_POT"
+  BUY_POT: "BUY_POT",
+  BUY_BREWER: "BUY_BREWER"
 };
 
 export const sellCoffee = createAction(types.SELL_COFFEE);
 export const startBrew = createAction(types.START_BREW);
 export const buyPot = createAction(types.BUY_POT);
+export const buyBrewer = createAction(types.BUY_BREWER);
 
 const pourCup = createAction(types.MAKE_COFFEE);
 const emptyPot = createAction(types.EMPTY_POT);
@@ -60,6 +62,7 @@ const defaultState = new Map({
   [currencies.MONEY]: 0,
   [currencies.BREW_PROGRESS]: 0,
   [currencies.POTS]: 0,
+  [currencies.BREWERS]: 0,
   [currencies.CUPS_PER_BREW]: INITIAL_CUPS_PER_BREW,
   [currencies.COST_OF_COFFEE]: 3
 });
@@ -90,6 +93,8 @@ export const reducer = (wallet = defaultState, action) => {
         return wallet;
       }
       return wallet.update(currencies.BREW_PROGRESS, c => c + BREW_SPEED);
+    case types.BUY_BREWER:
+      return buyIfEnoughMoney(Brewer, wallet);
     default:
       return wallet;
   }
