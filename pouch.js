@@ -8,7 +8,7 @@ const inflatePrice = x => {
   if (x === 0) {
     return 0;
   }
-  return Math.ceil((3 * Math.log(x)) ^ 2.5);
+  return Math.ceil(1.8 * x + 6 * Math.log(x));
 };
 
 export const Coffee = {
