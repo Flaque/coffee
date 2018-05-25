@@ -8,7 +8,7 @@ import { start } from "../game";
 import Head from "../lib/head.js";
 import BrewBar from "../lib/BrewBar";
 import { create } from "domain";
-import { Pot, Coffee, Brewer } from "../pouch";
+import pouch from "../pouch";
 
 const createCurrency = (label, subtitle) => ({ count }) => {
   const sub = subtitle ? (
@@ -31,10 +31,10 @@ const createCurrency = (label, subtitle) => ({ count }) => {
   );
 };
 
-const CoffeeCur = createCurrency("☕️ Coffee");
+const Coffee = createCurrency("☕️ Coffee");
 const Money = createCurrency("💵 Money");
 const Pots = createCurrency("🏺 Pot", "Makes more coffee per brew");
-const BrewerCur = createCurrency("🧙‍♀️ Brewer", "Passively makes coffee");
+const Brewer = createCurrency("🧙‍♀️ Brewer", "Passively makes coffee");
 
 const LinkButton = ({ children, onClick, disabled }) => (
   <p>
@@ -89,10 +89,10 @@ class Main extends React.Component {
         <br />
 
         <section>
-          <CoffeeCur count={coffee} />
+          <Coffee count={coffee} />
           <Money count={money} />
           <Pots count={pots} />
-          <BrewerCur count={brewers} />
+          <Brewer count={brewers} />
         </section>
       </main>
     );
@@ -108,9 +108,9 @@ const mapStateToProps = state => {
     progress: state.get(currencies.BREW_PROGRESS),
     cupsPerBrew: state.get(currencies.CUPS_PER_BREW),
     costs: {
-      coffee: Coffee.cost(state).get(currencies.MONEY),
-      pot: -Pot.cost(state).get(currencies.MONEY),
-      brewer: -Brewer.cost(state).get(currencies.MONEY)
+      coffee: pouch.Coffee.cost(state).get(currencies.MONEY),
+      pot: -pouch.Pot.cost(state).get(currencies.MONEY),
+      brewer: -pouch.Brewer.cost(state).get(currencies.MONEY)
     }
   };
 };

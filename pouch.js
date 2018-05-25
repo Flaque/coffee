@@ -11,7 +11,7 @@ const inflatePrice = x => {
   return Math.ceil(1.8 * x + 6 * Math.log(x));
 };
 
-export const Coffee = {
+const Coffee = {
   type: currencies.COFFEE,
   cost: state => {
     return Map({
@@ -21,7 +21,7 @@ export const Coffee = {
   }
 };
 
-export const Pot = {
+const Pot = {
   type: currencies.COFFEE,
   cost: state => {
     return Map({
@@ -33,12 +33,23 @@ export const Pot = {
   }
 };
 
-export const Brewer = {
+const Brewer = {
   type: currencies.BREWERS,
   cost: state => {
     return Map({
       [currencies.MONEY]: -10,
       [currencies.BREWERS]: 1
     });
+  },
+  effect: state => {
+    return Map({
+      [currencies.COFFEE]: 0.1
+    });
   }
+};
+
+export default {
+  Coffee,
+  Pot,
+  Brewer
 };

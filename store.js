@@ -4,8 +4,8 @@ import thunkMiddleware from "redux-thunk";
 import { Map } from "immutable";
 import currencies from "./currencies";
 import { createAction } from "redux-actions";
-import { Coffee, Pot, Brewer } from "./pouch";
-import { buy } from "merchant.js";
+import pouch from "./pouch";
+import { buy, effects, sum } from "merchant.js";
 import config from "./config";
 
 const { BREW_SPEED } = config;
@@ -35,13 +35,15 @@ export const types = {
   START_BREW: "START_BREW",
   EMPTY_POT: "EMPTY_POT",
   BUY_POT: "BUY_POT",
-  BUY_BREWER: "BUY_BREWER"
+  BUY_BREWER: "BUY_BREWER",
+  CALC_EFFECTS: "CALC_EFFECTS"
 };
 
 export const sellCoffee = createAction(types.SELL_COFFEE);
 export const startBrew = createAction(types.START_BREW);
 export const buyPot = createAction(types.BUY_POT);
 export const buyBrewer = createAction(types.BUY_BREWER);
+export const calcEffects = createAction(types.CALC_EFFECTS);
 
 const pourCup = createAction(types.MAKE_COFFEE);
 const emptyPot = createAction(types.EMPTY_POT);
@@ -64,7 +66,8 @@ const defaultState = new Map({
   [currencies.POTS]: 0,
   [currencies.BREWERS]: 0,
   [currencies.CUPS_PER_BREW]: INITIAL_CUPS_PER_BREW,
-  [currencies.COST_OF_COFFEE]: 3
+  [currencies.COST_OF_COFFEE]: config.START_COFFEE_PRICE,
+  [currencies.BREWER_COFFEE_PER_TICK]: config.START_BREWER_SPEED_PER_TICK
 });
 
 export const reducer = (wallet = defaultState, action) => {
@@ -78,9 +81,9 @@ export const reducer = (wallet = defaultState, action) => {
       if (wallet.get(currencies.COFFEE) <= 0) {
         return wallet;
       }
-      return buy(Coffee, wallet, wallet);
+      return buy(pouch.Coffee, wallet, wallet);
     case types.BUY_POT:
-      return updateCupsPerBrew(buyIfEnoughMoney(Pot, wallet));
+      return updateCupsPerBrew(buyIfEnoughMoney(pouch.Pot, wallet));
     case types.START_BREW:
       return updateCupsPerBrew(wallet).update(
         currencies.BREW_PROGRESS,
@@ -94,7 +97,9 @@ export const reducer = (wallet = defaultState, action) => {
       }
       return wallet.update(currencies.BREW_PROGRESS, c => c + BREW_SPEED);
     case types.BUY_BREWER:
-      return buyIfEnoughMoney(Brewer, wallet);
+      return buyIfEnoughMoney(pouch.Brewer, wallet);
+    case types.CALC_EFFECTS:
+      return sum(wallet, effects(Object.values(pouch), wallet, wallet));
     default:
       return wallet;
   }

@@ -1,8 +1,9 @@
-import { sellCoffee, brewCoffee } from "./store";
+import { sellCoffee, brewCoffee, calcEffects } from "./store";
 import config from "./config";
 
 const tick = dispatch => {
   dispatch(brewCoffee());
+  dispatch(calcEffects());
 };
 
 let timer = undefined;
